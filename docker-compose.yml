@@ -7,9 +7,15 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
+    volumes:
+      # Mount ADC credentials from host machine for local development
+      - ${HOME}/.config/gcloud/application_default_credentials.json:/tmp/application_default_credentials.json:ro
     environment:
       - PORT=3000
       - NODE_ENV=production
+      - FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID:-demo-project}
+      - FIREBASE_AUTH_EMULATOR_HOST=${FIREBASE_AUTH_EMULATOR_HOST:-}
+      - GOOGLE_APPLICATION_CREDENTIALS=/tmp/application_default_credentials.json
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/graphql"]
       interval: 10s
